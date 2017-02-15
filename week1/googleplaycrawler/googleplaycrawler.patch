@@ -27,11 +27,11 @@ index 970c8fe..85dc30b 100644
 -
 +<property>
 + <name>http.agent.name</name>
-+ <value>CloudACL</value>
++ <value>GooglePlayCrawler</value>
 +</property>
 +<property>
 +  <name>plugin.includes</name>
-+  <value>protocol-httpclient|urlfilter-regex|parse-(html|tika)|index-(basic|anchor)|indexer-solr|scoring-opic|urlnormalizer-(pass|regex|basic)</value>
++  <value>protocol-httpclient|urlfilter-regex|parse-googleplay|index-(basic|anchor)|indexer-solr|scoring-opic|urlnormalizer-(pass|regex|basic)</value>
 +  <description>Regular expression naming plugin directory names to
 +  include.  Any plugin not matching this expression is excluded.
 +  In any case you need at least include the nutch-extensionpoints plugin. By
