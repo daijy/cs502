@@ -21,4 +21,12 @@
         <name>dfs.replication</name>
         <value>1</value>
     </property>
+    <property>
+        <name>dfs.name.dir</name>
+        <value>/home/hadoop/hadoop-2.7.3/data/name</value>
+    </property>
+    <property>
+        <name>dfs.data.dir</name>
+        <value>/home/hadoop/hadoop-2.7.3/data/data</value>
+    </property>
 </configuration>
