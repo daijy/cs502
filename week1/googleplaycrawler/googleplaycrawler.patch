@@ -1,14 +1,23 @@
-commit 6c47733a33c166a650effc0e1df1c7fbc1f353be
+commit 13d4f43387e58d2ba0a528c545f9d87dac9f6986
 Author: Daniel Dai <daijy@hortonworks.com>
-Date:   Thu Feb 9 20:20:24 2017 -0800
+Date:   Tue Feb 21 21:22:14 2017 -0800
 
-    googleplaycrawler
+    GooglePlayCrawler
 
 diff --git a/build.xml b/build.xml
-index 5cff1ea..14924ca 100644
+index 5cff1ea..8c6d1f9 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -1051,6 +1051,7 @@
+@@ -890,6 +890,8 @@
+   <!-- target: clean-build  ============================================= -->
+   <target name="clean-build" description="--> clean the project built files">
+     <delete includeemptydirs="true" dir="${build.dir}"/>
++    <delete file="conf/regex-urlfilter.txt"/>
++    <delete file="conf/nutch-site.xml"/>
+   </target>
+ 
+   <!-- target: clean-dist   ============================================= -->
+@@ -1051,6 +1053,7 @@
          <source path="${plugins.dir}/parse-js/src/java/" />
          <source path="${plugins.dir}/parse-metatags/src/java/" />
          <source path="${plugins.dir}/parse-metatags/src/test/" />
@@ -17,7 +26,7 @@ index 5cff1ea..14924ca 100644
          <source path="${plugins.dir}/parse-swf/src/test/" />
          <source path="${plugins.dir}/parse-tika/src/java/" />
 diff --git a/conf/nutch-site.xml.template b/conf/nutch-site.xml.template
-index 970c8fe..85dc30b 100644
+index 970c8fe..8a34a76 100644
 --- a/conf/nutch-site.xml.template
 +++ b/conf/nutch-site.xml.template
 @@ -4,5 +4,44 @@
@@ -63,7 +72,7 @@ index 970c8fe..85dc30b 100644
 +</property>
 +<property>
 +  <name>mapred.reduce.tasks</name>
-+  <value>200</value>
++  <value>10</value>
 +</property>
  </configuration>
 diff --git a/conf/parse-plugins.xml b/conf/parse-plugins.xml
