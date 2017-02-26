@@ -66,7 +66,6 @@ public class NutchParsedDataLoader extends FileInputLoadFunc implements LoadMeta
       t.set(11, value.getMeta("rating"));
       t.set(12, value.getMeta("developerSite"));
       t.set(13, value.getMeta("developerEmail"));
-      t.set(14, value.getMeta("description"));
       
       return t;
     }
@@ -97,7 +96,7 @@ public class NutchParsedDataLoader extends FileInputLoadFunc implements LoadMeta
     @Override
     public ResourceSchema getSchema(String location, Job job) throws IOException {
         ResourceSchema schema = new ResourceSchema();
-        ResourceFieldSchema fields[] = new ResourceFieldSchema[15];
+        ResourceFieldSchema fields[] = new ResourceFieldSchema[14];
         fields[0] = new ResourceFieldSchema(); fields[0].setName("url"); fields[0].setType(DataType.CHARARRAY);
         fields[1] = new ResourceFieldSchema(); fields[1].setName("title"); fields[1].setType(DataType.CHARARRAY);
         fields[2] = new ResourceFieldSchema(); fields[2].setName("name"); fields[2].setType(DataType.CHARARRAY);
@@ -112,7 +111,6 @@ public class NutchParsedDataLoader extends FileInputLoadFunc implements LoadMeta
         fields[11] = new ResourceFieldSchema(); fields[11].setName("rating"); fields[11].setType(DataType.CHARARRAY);
         fields[12] = new ResourceFieldSchema(); fields[12].setName("developerSite"); fields[12].setType(DataType.CHARARRAY);
         fields[13] = new ResourceFieldSchema(); fields[13].setName("developerEmail"); fields[13].setType(DataType.CHARARRAY);
-        fields[14] = new ResourceFieldSchema(); fields[14].setName("description"); fields[14].setType(DataType.CHARARRAY);
         schema.setFields(fields);
         return schema;
     }
