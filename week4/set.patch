@@ -1,0 +1,264 @@
+Index: src/org/apache/pig/PigServer.java
+===================================================================
+--- src/org/apache/pig/PigServer.java	(revision 1785219)
++++ src/org/apache/pig/PigServer.java	(working copy)
+@@ -43,6 +43,7 @@
+ import java.util.Set;
+ import java.util.concurrent.atomic.AtomicInteger;
+ 
++import org.apache.commons.lang.StringUtils;
+ import org.apache.commons.logging.Log;
+ import org.apache.commons.logging.LogFactory;
+ import org.apache.hadoop.conf.Configuration;
+@@ -102,6 +103,7 @@
+ import org.apache.pig.validator.BlackAndWhitelistFilter;
+ import org.apache.pig.validator.PigCommandFilter;
+ 
++import com.beust.jcommander.Strings;
+ import com.google.common.annotations.VisibleForTesting;
+ 
+ /**
+@@ -395,6 +397,12 @@
+         pigContext.getLog4jProperties().setProperty("log4j.logger.org.apache.pig", pigContext.getDefaultLogLevel().toString());
+     }
+ 
++    public boolean isDebugOn() {
++        if (Logger.getLogger("org.apache.pig").getLevel() == Level.DEBUG) {
++            return true;
++        }
++        return false;
++    }
+     /**
+      * Set the default parallelism for this job
+      * @param p default number of reducers to use for this job.
+@@ -403,6 +411,10 @@
+         pigContext.defaultParallel = p;
+     }
+ 
++    public int getDefaultParallel() {
++        return pigContext.defaultParallel;
++    }
++
+     /**
+      * Starts batch execution mode.
+      */
+@@ -547,6 +559,10 @@
+         pigContext.addPathToSkip(path);
+     }
+ 
++    public String getPathToSkip() {
++        return StringUtils.join(pigContext.getPathsToSkip(), ",");
++    }
++
+     /**
+      * Defines an alias for the given function spec. This
+      * is useful for functions that require arguments to the
+@@ -956,6 +972,10 @@
+         jobName = PigContext.JOB_NAME_PREFIX + ":" + name;
+     }
+ 
++    public String getJobName() {
++        return jobName;
++    }
++
+     /**
+      * Set Hadoop job priority.  This value will get translated to mapred.job.priority.
+      * @param priority valid values are found in {@link org.apache.hadoop.mapred.JobPriority}
+@@ -964,6 +984,10 @@
+         jobPriority = priority;
+     }
+ 
++    public String getJobPriority() {
++        return jobPriority;
++    }
++
+     /**
+      * Executes a Pig Latin script up to and including indicated alias.  That is, if a user does:
+      * <pre>
+Index: src/org/apache/pig/tools/grunt/GruntParser.java
+===================================================================
+--- src/org/apache/pig/tools/grunt/GruntParser.java	(revision 1785219)
++++ src/org/apache/pig/tools/grunt/GruntParser.java	(working copy)
+@@ -572,44 +572,74 @@
+     protected void processSet(String key, String value) throws IOException, ParseException {
+         filter.validate(PigCommandFilter.Command.SET);
+         key = parameterSubstitutionInGrunt(key);
+-        value = parameterSubstitutionInGrunt(value);
++        if (value != null) {
++            value = parameterSubstitutionInGrunt(value);
++        }
+         if (key.equals("debug"))
+         {
+-            if (value.equals("on"))
+-                mPigServer.debugOn();
+-            else if (value.equals("off"))
+-                mPigServer.debugOff();
+-            else
+-                throw new ParseException("Invalid value " + value + " provided for " + key);
++            if (value == null) {
++                System.out.println("debug=" + mPigServer.isDebugOn());
++            } else {
++                if (value.equals("on"))
++                    mPigServer.debugOn();
++                else if (value.equals("off"))
++                    mPigServer.debugOff();
++                else
++                    throw new ParseException("Invalid value " + value + " provided for " + key);
++            }
+         }
+         else if (key.equals("job.name"))
+         {
+-            mPigServer.setJobName(value);
++            if (value == null) {
++                System.out.println("job.name=" + mPigServer.getJobName());
++            } else {
++                mPigServer.setJobName(value);
++            }
+         }
+         else if (key.equals("job.priority"))
+         {
+-            mPigServer.setJobPriority(value);
++            if (value == null) {
++                System.out.println("job.priority=" + mPigServer.getJobPriority());
++            } else {
++                mPigServer.setJobPriority(value);
++            }
+         }
+         else if (key.equals("stream.skippath")) {
+-            // Validate
+-            File file = new File(value);
+-            if (!file.exists() || file.isDirectory()) {
+-                throw new IOException("Invalid value for stream.skippath:" +
+-                                      value);
++            if (value == null) {
++                System.out.println("stream.skippath=" + mPigServer.getPathToSkip());
++            } else {
++                // Validate
++                File file = new File(value);
++                if (!file.exists() || file.isDirectory()) {
++                    throw new IOException("Invalid value for stream.skippath:" +
++                                          value);
++                }
++                mPigServer.addPathToSkip(value);
+             }
+-            mPigServer.addPathToSkip(value);
+         }
+         else if (key.equals("default_parallel")) {
+-            // Validate
+-            try {
+-                mPigServer.setDefaultParallel(Integer.parseInt(value));
+-            } catch (NumberFormatException e) {
+-                throw new ParseException("Invalid value for default_parallel");
++            if (value == null) {
++                System.out.println("default_parallel=" + mPigServer.getDefaultParallel());
++            } else {
++                // Validate
++                try {
++                    mPigServer.setDefaultParallel(Integer.parseInt(value));
++                } catch (NumberFormatException e) {
++                    throw new ParseException("Invalid value for default_parallel");
++                }
+             }
+         }
+         else
+         {
+-           mPigServer.getPigContext().getExecutionEngine().setProperty(key, value);
++            if (value == null) {
++                if (mPigServer.getPigContext().getProperties().get(key) != null) {
++                    System.out.println(key + "=" + mPigServer.getPigContext().getProperties().get(key));
++                } else {
++                    System.out.println(key + " is undefined");
++                }
++            } else {
++                mPigServer.getPigContext().getExecutionEngine().setProperty(key, value);
++            }
+         }
+     }
+ 
+Index: src/org/apache/pig/tools/pigscript/parser/PigScriptParser.jj
+===================================================================
+--- src/org/apache/pig/tools/pigscript/parser/PigScriptParser.jj	(revision 1785219)
++++ src/org/apache/pig/tools/pigscript/parser/PigScriptParser.jj	(working copy)
+@@ -132,7 +132,13 @@
+ 		else
+ 			return s;
+ 	}
+-
++	static boolean eolOrSemicolon(int kind)
++    {
++        if (kind == EOL || kind == SEMICOLON) {
++            return true;
++        }
++        return false;
++    }
+ }
+ PARSER_END(PigScriptParser)
+ 
+@@ -626,8 +632,8 @@
+ 	<SET>
+ 	(
+ 		t1 = GetKey()
+-		t2 = GetValue()
+-		{processSet(t1.image, unquote(t2.image));}
++		t2 = GetValueOrNull()
++		{processSet(t1.image, eolOrSemicolon(t2.kind)?null:unquote(t2.image));}
+     	|
+ 		{processSet();}
+ 	)
+@@ -828,6 +834,21 @@
+ 	{return t;}
+ }
+ 
++Token GetValueOrNull() :
++{
++	Token t;
++}
++{
++    (
++    t = GetValue()
++    |
++    t = <EOL>
++    |
++    t = <SEMICOLON>
++    )
++    {return t;}
++}
++
+ Token GetValue() :
+ {
+ 	Token t;
+Index: test/org/apache/pig/test/TestGrunt.java
+===================================================================
+--- test/org/apache/pig/test/TestGrunt.java	(revision 1785219)
++++ test/org/apache/pig/test/TestGrunt.java	(working copy)
+@@ -24,6 +24,7 @@
+ 
+ import java.io.BufferedReader;
+ import java.io.ByteArrayInputStream;
++import java.io.ByteArrayOutputStream;
+ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileReader;
+@@ -31,6 +32,7 @@
+ import java.io.FilenameFilter;
+ import java.io.InputStream;
+ import java.io.InputStreamReader;
++import java.io.PrintStream;
+ import java.io.PrintWriter;
+ import java.io.StringReader;
+ import java.util.ArrayList;
+@@ -1430,6 +1432,14 @@
+         new Grunt(new BufferedReader(reader), pc).exec();
+ 
+         assertEquals("my.arbitrary.value",  pc.getProperties().getProperty("my.arbitrary.key"));
++
++        ByteArrayOutputStream baos = new ByteArrayOutputStream();
++        System.setOut(new PrintStream(baos));
++        strCmd = "set my.arbitrary.key\n";
++        reader = new InputStreamReader(new ByteArrayInputStream(strCmd.getBytes()));
++        new Grunt(new BufferedReader(reader), pc).exec();
++
++        assertEquals(baos.toString(), "my.arbitrary.key=my.arbitrary.value\n");
+     }
+ 
+     @Test
