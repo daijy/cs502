@@ -1,0 +1,38 @@
+diff --git a/week1/wordcount/src/java/com/example/WordCount.java b/week1/wordcount/src/java/com/example/WordCount.java
+index 954aaab..49a1ea0 100644
+--- a/week1/wordcount/src/java/com/example/WordCount.java
++++ b/week1/wordcount/src/java/com/example/WordCount.java
+@@ -26,6 +26,7 @@ import org.apache.hadoop.io.IntWritable;
+ import org.apache.hadoop.io.Text;
+ import org.apache.hadoop.mapreduce.Job;
+ import org.apache.hadoop.mapreduce.Mapper;
++import org.apache.hadoop.mapreduce.Partitioner;
+ import org.apache.hadoop.mapreduce.Reducer;
+ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+@@ -65,6 +66,16 @@ public class WordCount {
+     }
+   }
+ 
++  public static class MyPartitioner extends Partitioner<Text, IntWritable> {
++    @Override
++    public int getPartition(Text key, IntWritable value, int numPartitions) {
++        if (key.charAt(0)<='n') {
++            return 1;
++        } else {
++            return 0;
++        }
++    }
++  }
+   public static void main(String[] args) throws Exception {
+     Configuration conf = new Configuration();
+     String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
+@@ -78,6 +89,8 @@ public class WordCount {
+     job.setReducerClass(IntSumReducer.class);
+     job.setOutputKeyClass(Text.class);
+     job.setOutputValueClass(IntWritable.class);
++    job.setPartitionerClass(MyPartitioner.class);
++    job.setNumReduceTasks(2);
+     for (int i = 0; i < otherArgs.length - 1; ++i) {
+       FileInputFormat.addInputPath(job, new Path(otherArgs[i]));
+     }

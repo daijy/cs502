@@ -17,7 +17,13 @@
  */
 package com.example;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
@@ -27,6 +33,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
@@ -38,12 +45,27 @@ public class WordCount {
     
     private final static IntWritable one = new IntWritable(1);
     private Text word = new Text();
-      
+    Map<String, String> dict = new HashMap<String, String>();
+
+    @Override
+    public void setup(Context context) throws IOException, InterruptedException {
+        BufferedReader reader = new BufferedReader(new FileReader("dict.txt"));
+        String line;
+        while ((line=reader.readLine())!=null) {
+            String[] items = line.split("\t");
+            dict.put(items[0], items[1]);
+        }
+        reader.close();
+    }
     public void map(Object key, Text value, Context context
                     ) throws IOException, InterruptedException {
       StringTokenizer itr = new StringTokenizer(value.toString());
       while (itr.hasMoreTokens()) {
-        word.set(itr.nextToken());
+        String w = itr.nextToken();
+        if (dict.containsKey(w)) {
+            w = dict.get(w);
+        }
+        word.set(w);
         context.write(word, one);
       }
     }
@@ -78,6 +100,7 @@ public class WordCount {
     job.setReducerClass(IntSumReducer.class);
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(IntWritable.class);
+    job.setCacheArchives(new URI[] {new File("dict.txt").toURI()});
     for (int i = 0; i < otherArgs.length - 1; ++i) {
       FileInputFormat.addInputPath(job, new Path(otherArgs[i]));
     }

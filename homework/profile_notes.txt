@@ -1,0 +1,11 @@
+Yourkit CPU profile:
+export PIG_OPTS="-agentpath:/home/hadoop/yjp-2016.02/bin/linux-x86-64/libyjpagent.so=onexit=snapshot,sampling,dir=/tmp"
+
+Java memory dump:
+jmap -dump:file=<file_name> <pid>
+
+Java memory dump upon OOM:
+export PIG_OPTS="-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp"
+
+MAT reading:
+http://eclipsesource.com/blogs/2013/01/21/10-tips-for-using-the-eclipse-memory-analyzer/
