@@ -1,0 +1,59 @@
+{
+  "type" : "index_hadoop",
+  "spec" : {
+    "ioConfig" : {
+      "type" : "hadoop",
+      "inputSpec" : {
+        "type" : "static",
+        "paths" : "file:///Users/daijy/capstone/cloudacl.txt"
+      }
+    },
+    "dataSchema" : {
+      "dataSource" : "cloudacl_accesslog",
+      "granularitySpec" : {
+        "type" : "uniform",
+        "segmentGranularity" : "day",
+        "queryGranularity" : "none",
+        "intervals" : ["2017-03-05/2017-03-11"]
+      },
+      "parser" : {
+        "type" : "hadoopyString",
+        "parseSpec" : {
+          "format" : "tsv",
+          "columns" : [
+            "country_code",
+            "country",
+            "city",
+            "timestamp",
+            "category"
+          ],
+          "dimensionsSpec" : {
+            "dimensions" : [
+              "country_code",
+              "city",
+              "category"
+            ]
+          },
+          "timestampSpec" : {
+            "format": "dd/MMM/yyyy:HH:mm:ss",
+            "column" : "timestamp"
+          }
+        }
+      },
+      "metricsSpec" : [
+        {
+          "name" : "count",
+          "type" : "count"
+        }
+      ]
+    },
+    "tuningConfig" : {
+      "type" : "hadoop",
+      "partitionsSpec" : {
+        "type" : "hashed",
+        "targetPartitionSize" : 5000000
+      },
+      "jobProperties" : {}
+    }
+  }
+}
