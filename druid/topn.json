@@ -1,0 +1,18 @@
+{
+  "queryType": "topN",
+  "dataSource": "cloudacl_accesslog",
+  "dimension": "country_code",
+  "threshold": 5,
+  "metric": "count",
+  "granularity": "all",
+  "aggregations": [
+    {
+      "type": "longSum",
+      "name": "count",
+      "fieldName": "count"
+    }
+  ],
+  "intervals": [
+    "2017-03-05T00:00:00.000/2017-03-12T00:00:00.000"
+  ]
+}
