@@ -1,0 +1,11 @@
+我们的数据是CloudACL采集的API请求纪录。CloudACL前端的产品包括mobile app和browser add-on，每个前端会截获url，通过API请求向后端的tomcat获取该url对应的类型，前端根据url类型做相应动作。
+下载的文件每个tar.gz包是一天的tomcat log记录，包含若干个.processed文件，每个文件都是text格式。每条记录一行。记录分为两种格式，分别对应新旧两组不同的API。处理时需要根据GET的URL分别处理。以下各举一个例子：
+axis2:
+203.87.133.189 - - [04/Mar/2017:23:59:59 +0000] "GET /axis2/services/WebFilteringService/getCategoryByUrl?app=chrome_antiporn&ver=0.19.7.1&url=https%3A//www.googleapis.com/rpc&cat=search-engine HTTP/1.1" 200 133 "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36"
+
+jersey:
+51.39.90.114 - - [05/Mar/2017:00:04:19 +0000] "GET /webapi/getcategory?uri=pt.tvtc.gov.sa&cat=government&key=d647fe2a-2193-4c2d-8cad-38e78316d020 HTTP/1.1" 200 63 "-" "Apache-HttpClient/UNAVAILABLE (java 1.4)"
+
+在axis2 api中，app是指前端app的名字。jersey api中，key是指前端app的application key。其他项目应该是显而易见的。
+有同学可能有困惑为什么请求中已经包含了url类型(cat)。其实这一项是为了让数据更丰富一些，后来加上去的。原始数据是没有这一项的。我们可能的类型有:
+unknown,hacking,phishing-and-fraud,botnet,malware,spyware-and-adware,keylogger-and-monitoring,peer2peer,media-streaming,online-storage,abortion,adult-and-pornography,sex-education,nudity,abused-drugs,marijuana,healthy-and-medicine,real-estate,internet-security,financial-service,business-and-economy,computer-information,auctions,shopping,cult-and-occult,travel,home-garden,military,social-networking,dead-sites,stock-and-tool,training-and-tool,dating,religion,entertainment-and-art,personal-site-and-blog,legal,local-info,job-search,gambling,translation,research-reference,software-download,game,philosophy-and-political,weapon,pay2surf,hunting-and-fishing,society,educational-institution,online-greeting,sport,swimsuits-&-intimate-apparel,questionable,kid,search-engine,internet-portal,online-advertisement,web-mail,envasion-proxy,music,government,news-and-media,content-delivery-network,internet-communication,spam-comfirmed,spam-url,spam-unconfirmed,http-proxy,dynamically-content,parked-domain,alcohol-and-tobacco,private-ip,image-and-video-search,fashion-and-beauty,recreation-and-hobbies,motor-vehicle,web-hosting
