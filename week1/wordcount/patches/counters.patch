@@ -1,5 +1,5 @@
 diff --git a/week1/wordcount/src/java/com/example/WordCount.java b/week1/wordcount/src/java/com/example/WordCount.java
-index 954aaab..2e6549b 100644
+index 6d47026..bb7127a 100644
 --- a/week1/wordcount/src/java/com/example/WordCount.java
 +++ b/week1/wordcount/src/java/com/example/WordCount.java
 @@ -24,6 +24,7 @@ import org.apache.hadoop.conf.Configuration;
@@ -22,7 +22,7 @@ index 954aaab..2e6549b 100644
      private final static IntWritable one = new IntWritable(1);
      private Text word = new Text();
 +    Counters counters = new Counters();
-       
+ 
      public void map(Object key, Text value, Context context
                      ) throws IOException, InterruptedException {
 @@ -45,6 +48,11 @@ public class WordCount {

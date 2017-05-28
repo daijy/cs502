@@ -1,18 +1,15 @@
 diff --git a/week1/wordcount/src/java/com/example/WordCount.java b/week1/wordcount/src/java/com/example/WordCount.java
-index 954aaab..a2f9e66 100644
+index 6d47026..6af3784 100644
 --- a/week1/wordcount/src/java/com/example/WordCount.java
 +++ b/week1/wordcount/src/java/com/example/WordCount.java
-@@ -35,16 +35,19 @@ public class WordCount {
- 
+@@ -36,15 +36,18 @@ public class WordCount {
    public static class TokenizerMapper 
         extends Mapper<Object, Text, Text, IntWritable>{
--    
+     
 -    private final static IntWritable one = new IntWritable(1);
-+
      private Text word = new Text();
--      
 +    int multiplier = -1;
-+
+ 
      public void map(Object key, Text value, Context context
                      ) throws IOException, InterruptedException {
 +      if (multiplier == -1) {
