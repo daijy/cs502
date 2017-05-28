@@ -3,14 +3,11 @@ package com.example.pig;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.pig.PigServer;
 import org.apache.pig.data.Tuple;
 
 public class TestPigServer {
     static public void main(String[] args) throws IOException {
-
-    	PropertyConfigurator.configure("log4j.properties");
 
         PigServer pigServer = new PigServer("local");
 
