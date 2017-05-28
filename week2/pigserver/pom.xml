@@ -24,7 +24,6 @@
                 </executions>
                 <configuration>
                     <cleanupDaemonThreads>false</cleanupDaemonThreads>
-                    <additionalClasspathElements>/home/hadoop/hadoop-2.7.3/etc/hadoop</additionalClasspathElements>
                 </configuration>
             </plugin>
         </plugins>
