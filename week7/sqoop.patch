@@ -1,0 +1,14 @@
+diff --git a/src/java/org/apache/sqoop/mapreduce/db/TextSplitter.java b/src/java/org/apache/sqoop/mapreduce/db/TextSplitter.java
+index d3085cd..54dfac8 100644
+--- a/src/java/org/apache/sqoop/mapreduce/db/TextSplitter.java
++++ b/src/java/org/apache/sqoop/mapreduce/db/TextSplitter.java
+@@ -156,7 +156,8 @@
+     List<String> splitStrings = new ArrayList<String>();
+ 
+     // Convert the BigDecimal splitPoints into their string representations.
+-    for (BigDecimal bd : splitPoints) {
++    for (int i=1;i<splitPoints.size()-1;i++) {
++      BigDecimal bd = splitPoints.get(i);
+       splitStrings.add(commonPrefix + bigDecimalToString(bd));
+     }
+ 

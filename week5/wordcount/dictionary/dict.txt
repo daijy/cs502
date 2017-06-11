@@ -1,0 +1,4 @@
+我:I
+爱:LOVE
+猫:Cat
+狗:Dog
