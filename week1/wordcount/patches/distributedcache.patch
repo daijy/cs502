@@ -16,7 +16,7 @@ index 416f1d4..5c73b93 100644
  
  </project>
 diff --git a/week1/wordcount/src/java/com/example/WordCount.java b/week1/wordcount/src/java/com/example/WordCount.java
-index 6d47026..4a4697a 100644
+index 6d47026..23a7f24 100644
 --- a/week1/wordcount/src/java/com/example/WordCount.java
 +++ b/week1/wordcount/src/java/com/example/WordCount.java
 @@ -31,6 +31,9 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -29,9 +29,11 @@ index 6d47026..4a4697a 100644
  public class WordCount {
  
    public static class TokenizerMapper 
-@@ -43,8 +46,11 @@ public class WordCount {
+@@ -42,9 +45,13 @@ public class WordCount {
+     public void map(Object key, Text value, Context context
                      ) throws IOException, InterruptedException {
        StringTokenizer itr = new StringTokenizer(value.toString());
++      Automaton automaton = new RegExp("h(.*)").toAutomaton();
        while (itr.hasMoreTokens()) {
 -        word.set(itr.nextToken());
 -        context.write(word, one);
